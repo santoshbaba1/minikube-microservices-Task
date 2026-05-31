@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: order-deployment
+  namespace: microservices
+
+spec:
+  replicas: 2
+
+  selector:
+    matchLabels:
+      app: order
+
+  template:
+    metadata:
+      labels:
+        app: order
+
+    spec:
+      containers:
+      - name: order
+
+        image: santoshbaba1/order-service-v1:latest
+
+        ports:
+        - containerPort: 3002
+
+        env:
+        - name: USER_SERVICE_URL
+          value: http://user-service:3000
+
+        - name: PRODUCT_SERVICE_URL
+          value: http://product-service:3001
+
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+
+          limits:
+            cpu: 250m
+            memory: 256Mi
+
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 3002
+
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 3002
