@@ -477,78 +477,89 @@ docker system prune -a
 ```
 
 ---
-# Kubernetes Microservices Deployment on Minikube
-  Project Overview
+#   Kubernetes Microservices Deployment on Minikube
+##  Project Overview
 
-  This project demonstrates the deployment of a containerized Node.js microservices application on Kubernetes using Minikube.
-  The application consists of four microservices:
+    This project demonstrates the deployment of a containerized Node.js microservices application on Kubernetes using Minikube.
+    The application consists of four microservices:
 ---text
-  User Service (Port 3000)
-  Product Service (Port 3001)
-  Order Service (Port 3002)
-  Gateway Service (Port 3003)
+
+    User Service (Port 3000)
+    Product Service (Port 3001)
+    Order Service (Port 3002)
+    Gateway Service (Port 3003)
 ---
+
 The services are deployed using Kubernetes Deployments and exposed internally using ClusterIP Services. Service-to-service communication is achieved through Kubernetes DNS-based service discovery.
 
 Architecture
 ---text
-Client
-   |
-   v
-Gateway Service (3003)
-   |
-   |-----------------------------
-   |            |               |
-   v            v               v
-User        Product         Order
-Service     Service         Service
-(3000)      (3001)          (3002)
+
+    Client
+       |
+       v
+    Gateway Service (3003)
+       |
+       |-----------------------------
+       |            |               |
+       v            v               v
+    User        Product         Order
+    Service     Service         Service
+    (3000)      (3001)          (3002)
 ---
-Prerequisites
+# Prerequisites
 
-Before starting, ensure the following tools are installed:
+    Before starting, ensure the following tools are installed:
 
-Docker
-Kubernetes CLI (kubectl)
-Minikube
-Git
+---text
 
-Verify installation:
+    Docker
+    Kubernetes CLI (kubectl)
+    Minikube
+    Git
+---
+    Verify installation:
+---
+---bash
+    
+    docker --version
+    kubectl version --client
+    minikube version
+    Project Structure
+    Microservices-Task/
+    │
+    ├── k8s/
+    │   ├── namespace.yaml
+    │   ├── user-deployment.yaml
+    │   ├── user-service.yaml
+    │   ├── product-deployment.yaml
+    │   ├── product-service.yaml
+    │   ├── order-deployment.yaml
+    │   ├── order-service.yaml
+    │   ├── gateway-deployment.yaml
+    │   ├── gateway-service.yaml
+    │   └── ingress.yaml
+    │
+    ├── user-service/
+    ├── product-service/
+    ├── order-service/
+    ├── gateway-service/
+    │
+    └── README.md
+---
+# Step 1: Start Minikube
 
-docker --version
-kubectl version --client
-minikube version
-Project Structure
-Microservices-Task/
-│
-├── k8s/
-│   ├── namespace.yaml
-│   ├── user-deployment.yaml
-│   ├── user-service.yaml
-│   ├── product-deployment.yaml
-│   ├── product-service.yaml
-│   ├── order-deployment.yaml
-│   ├── order-service.yaml
-│   ├── gateway-deployment.yaml
-│   ├── gateway-service.yaml
-│   └── ingress.yaml
-│
-├── user-service/
-├── product-service/
-├── order-service/
-├── gateway-service/
-│
-└── README.md
-Step 1: Start Minikube
-
-Start Minikube using Docker driver:
-
-minikube start --driver=docker
-
-Verify cluster status:
-
-kubectl get nodes
-
+    Start Minikube using Docker driver:
+---bash
+    
+    minikube start --driver=docker
+---
+    Verify cluster status:
+---
+---text
+    
+    kubectl get nodes
+---
 Expected Output:
 
 NAME       STATUS   ROLES           AGE
