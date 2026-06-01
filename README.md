@@ -482,7 +482,7 @@ docker system prune -a
 
   This project demonstrates the deployment of a containerized Node.js microservices application on Kubernetes using Minikube.
   The application consists of four microservices:
----
+---text
   User Service (Port 3000)
   Product Service (Port 3001)
   Order Service (Port 3002)
@@ -491,6 +491,7 @@ docker system prune -a
 The services are deployed using Kubernetes Deployments and exposed internally using ClusterIP Services. Service-to-service communication is achieved through Kubernetes DNS-based service discovery.
 
 Architecture
+---text
 Client
    |
    v
@@ -502,6 +503,7 @@ Gateway Service (3003)
 User        Product         Order
 Service     Service         Service
 (3000)      (3001)          (3002)
+---
 Prerequisites
 
 Before starting, ensure the following tools are installed:
