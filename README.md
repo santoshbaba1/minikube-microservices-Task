@@ -477,19 +477,240 @@ docker system prune -a
 ```
 
 ---
+# Kubernetes Microservices Deployment on Minikube
+Project Overview
 
-# Final Validation Checklist
+This project demonstrates the deployment of a containerized Node.js microservices application on Kubernetes using Minikube.
 
-- Docker installed
-- Docker Compose installed
-- All containers running
-- User Service working
-- Product Service working
-- Order Service working
-- Gateway Service working
-- APIs accessible
-- No container crashes
-- No port conflicts
+The application consists of four microservices:
+
+User Service (Port 3000)
+Product Service (Port 3001)
+Order Service (Port 3002)
+Gateway Service (Port 3003)
+
+The services are deployed using Kubernetes Deployments and exposed internally using ClusterIP Services. Service-to-service communication is achieved through Kubernetes DNS-based service discovery.
+
+Architecture
+Client
+   |
+   v
+Gateway Service (3003)
+   |
+   |-----------------------------
+   |            |               |
+   v            v               v
+User        Product         Order
+Service     Service         Service
+(3000)      (3001)          (3002)
+Prerequisites
+
+Before starting, ensure the following tools are installed:
+
+Docker
+Kubernetes CLI (kubectl)
+Minikube
+Git
+
+Verify installation:
+
+docker --version
+kubectl version --client
+minikube version
+Project Structure
+Microservices-Task/
+│
+├── k8s/
+│   ├── namespace.yaml
+│   ├── user-deployment.yaml
+│   ├── user-service.yaml
+│   ├── product-deployment.yaml
+│   ├── product-service.yaml
+│   ├── order-deployment.yaml
+│   ├── order-service.yaml
+│   ├── gateway-deployment.yaml
+│   ├── gateway-service.yaml
+│   └── ingress.yaml
+│
+├── user-service/
+├── product-service/
+├── order-service/
+├── gateway-service/
+│
+└── README.md
+Step 1: Start Minikube
+
+Start Minikube using Docker driver:
+
+minikube start --driver=docker
+
+Verify cluster status:
+
+kubectl get nodes
+
+Expected Output:
+
+NAME       STATUS   ROLES           AGE
+minikube   Ready    control-plane
+Step 2: Build Docker Images
+
+Build images for all microservices:
+
+User Service
+cd user-service
+docker build -t santoshbaba1/user-service:v1 .
+Product Service
+cd ../product-service
+docker build -t santoshbaba1/product-service:v1 .
+Order Service
+cd ../order-service
+docker build -t santoshbaba1/order-service:v1 .
+Gateway Service
+cd ../gateway-service
+docker build -t santoshbaba1/gateway-service:v1 .
+Step 3: Push Images to Docker Hub
+
+Login:
+
+docker login
+
+Push images:
+
+docker push santoshbaba1/user-service-v1
+docker push santoshbaba1/product-service-v1
+docker push santoshbaba1/order-service-v1
+docker push santoshbaba1/gateway-service-v1
+Step 4: Deploy Kubernetes Resources
+
+Create namespace:
+
+kubectl apply -f k8s/namespace.yaml
+
+Deploy all resources:
+
+kubectl apply -f k8s/
+
+Verify deployments:
+
+kubectl get deployments -n microservices
+
+Verify pods:
+
+kubectl get pods -n microservices
+
+Verify services:
+
+kubectl get svc -n microservices
+Step 5: Service Discovery Validation
+
+Launch a temporary pod:
+
+kubectl run debug \
+--rm -it \
+--image=busybox \
+-n microservices \
+-- sh
+
+Inside the pod:
+
+wget -qO- http://user-service:3000
+wget -qO- http://product-service:3001
+wget -qO- http://order-service:3002
+
+Successful responses confirm Kubernetes DNS-based service discovery.
+
+Step 6: Test Gateway Service
+
+Port-forward Gateway Service:
+
+kubectl port-forward svc/gateway-service 3003:3003 -n microservices
+
+Open browser:
+
+http://localhost:3003
+
+Or test using curl:
+
+curl http://localhost:3003
+Step 7: View Logs
+
+Gateway Service:
+
+kubectl logs deployment/gateway-deployment -n microservices
+
+Order Service:
+
+kubectl logs deployment/order-deployment -n microservices
+
+User Service:
+
+kubectl logs deployment/user-deployment -n microservices
+
+Product Service:
+
+kubectl logs deployment/product-deployment -n microservices
+Bonus Task: Ingress Configuration
+
+Enable Ingress Controller:
+
+minikube addons enable ingress
+
+Apply Ingress Resource:
+
+kubectl apply -f k8s/ingress.yaml
+
+Verify:
+
+kubectl get ingress -n microservices
+
+Configured Routes:
+
+Path	Service
+/api/users	User Service
+/api/products	Product Service
+/api/orders	Order Service
+/	Gateway Service
+Screenshots Included
+
+The submission includes screenshots of:
+
+kubectl get pods -n microservices
+kubectl get svc -n microservices
+kubectl get deployments -n microservices
+Service communication logs
+Gateway access through port-forward
+Ingress configuration (optional)
+Troubleshooting
+CrashLoopBackOff
+
+Check logs:
+
+kubectl logs <pod-name> -n microservices
+
+Describe pod:
+
+kubectl describe pod <pod-name> -n microservices
+Image Pull Errors
+
+Verify image exists:
+
+docker pull santoshbaba1/user-service-v1
+Service Communication Issues
+
+Verify services:
+
+kubectl get svc -n microservices
+
+Verify DNS resolution:
+
+kubectl exec -it <pod-name> -n microservices -- nslookup user-service
+Conclusion
+
+The microservices application was successfully deployed on Kubernetes using Minikube. All services communicate through Kubernetes service discovery, are managed through Deployments and Services, and can be accessed through Gateway Service and optional Ingress routing.
+
+
+
+
 
 ---
 
